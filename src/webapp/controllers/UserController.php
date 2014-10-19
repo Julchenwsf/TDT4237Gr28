@@ -58,7 +58,8 @@ class UserController extends Controller
     function logout()
     {
         Auth::logout();
-        $this->app->redirect('/?msg=Successfully logged out.');
+        $this->app->flash('info', 'Successfully logged out.');
+        $this->app->redirect('/');
     }
 
     function show($username)
