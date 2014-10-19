@@ -18,16 +18,16 @@
             <th>Age</th>
         </tr>
             <tr>
-            <td>{{ user.id|raw }}</td>
-            <td>{{ user.username|raw }}</td>
-            <td><!-- {{ user.passwordhash|raw }} -->********************************(not shown)</td>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>******(not shown)</td>
             <td>{{ user.email|raw }}</td>
-            <td>{{ user.bio|raw }}</td>
-            <td>{{ user.age|raw }}</td>
+            <td>{{ user.bio }}</td>
+            <td>{{ user.age }}</td>
         </tr>
     </table>
 {% else %}
-    Could not find a user with username "{{ username|raw }}".
+    Could not find a user with username "{{ username }}".
 {% endif %}
 
 {% endblock %}

@@ -22,7 +22,7 @@
         <div id="container">
             <div id="navbar">
                 {% if isLoggedIn %}
-                    Logged in as {{ loggedInUsername|raw }}.<br>
+                    Logged in as {{ loggedInUsername|escape(strategy) }}.<br>
                     <a href="{{ urlFor('editprofile') }}">Edit profile</a> <br>
                     <a href="{{ urlFor('logout') }}">Log out</a> <br>
                 {% endif %}
@@ -41,6 +41,7 @@
             </div>
 
             <div id="content">
+                {#TODO clement-casse[]:  Check if `flash.info` can be modified from user input, if yes, the user input must be escaped#}
                 <div id="flashinfo">{{ flash.info|raw }}</div>
                 {% block content %}{% endblock %}
             </div>
