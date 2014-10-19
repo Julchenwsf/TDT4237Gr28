@@ -22,7 +22,7 @@
         <div id="container">
             <div id="navbar">
                 {% if isLoggedIn %}
-                    Logged in as {{ loggedInUsername|escape(strategy) }}.<br>
+                    Logged in as {{ loggedInUsername }}.<br>
                     <a href="{{ urlFor('editprofile') }}">Edit profile</a> <br>
                     <a href="{{ urlFor('logout') }}">Log out</a> <br>
                 {% endif %}
