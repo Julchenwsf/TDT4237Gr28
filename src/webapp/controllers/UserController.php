@@ -30,7 +30,13 @@ class UserController extends Controller
         $username = $request->post('user');
         $pass = $request->post('pass');
 
-        $hashed = Hash::make($pass);
+        if (strlen($pass) < 8) {
+            $this->app->flashNow('error', 'The password must be at least 8 characters long.');
+            $this->render('newUserForm.twig', ['username' => $username]);
+            return;
+        }
+
+        $hashed = Hash::make($username, $pass);
 
         $user = User::makeEmpty();
         $user->setUsername($username);
@@ -57,8 +63,10 @@ class UserController extends Controller
 
     function logout()
     {
-        Auth::logout();
-        $this->app->flash('info', 'Successfully logged out.');
+        if (md5($this->app->request->get('t')) === md5($_SESSION['logouttoken'])) {
+            Auth::logout();
+            $this->app->flash('info', "Successfully logged out.");
+        }
         $this->app->redirect('/');
     }
 

@@ -1,22 +1,22 @@
 <?php
+header('Strict-Transport-Security: max-age=31536000');
 require_once __DIR__ . '/../vendor/autoload.php';
-
-//test
 
 $app = new \Slim\Slim([
     'templates.path' => __DIR__.'/webapp/templates/',
-    'debug' => true,
+    'debug' => false,
     'view' => new \Slim\Views\Twig()
 ]);
 
 $view = $app->view();
 $view->parserExtensions = array(
     new \Slim\Views\TwigExtension(),
+    new \tdt4237\webapp\SecureTwigExtension(),
 );
 
 try {
-    // Create (connect to) SQLite database in file
-    $app->db = new PDO('sqlite:app.db');
+    // Create (connect to) SQLite database in file. Disable emulate prepares for enhanced security.
+    $app->db = new PDO('sqlite:app.db', NULL, NULL, array(PDO::ATTR_EMULATE_PREPARES => false));
     // Set errormode to exceptions
     $app->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch(PDOException $e) {
@@ -52,7 +52,7 @@ $app->get('/logout', $ns . 'UserController:logout')->name('logout');
 
 // Admin restricted area
 $app->get('/admin', $ns . 'AdminController:index')->name('admin');
-$app->get('/admin/delete/:username', $ns . 'AdminController:delete');
+$app->post('/admin/delete/:username', $ns . 'AdminController:delete');
 
 // Movies
 $app->get('/movies', $ns . 'MovieController:index')->name('movies');

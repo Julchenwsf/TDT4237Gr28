@@ -29,15 +29,14 @@ class LoginController extends Controller
         $pass = $request->post('pass');
 
         if (Auth::checkCredentials($user, $pass)) {
+            session_destroy();
+            session_write_close();
+            session_start();
+            session_regenerate_id();
+
             $_SESSION['user'] = $user;
-
-            $isAdmin = Auth::user()->isAdmin();
-
-            if ($isAdmin) {
-                setcookie("isadmin", "yes");
-            } else {
-                setcookie("isadmin", "no");
-            }
+            $_SESSION['logouttoken'] = hash_hmac('md5', uniqid(true), $user.$pass);
+            $_SESSION['isadmin'] = Auth::user()->isAdmin();
 
             $this->app->flash('info', "You are now successfully logged in as $user.");
             $this->app->redirect('/');

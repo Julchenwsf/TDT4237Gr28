@@ -10,10 +10,6 @@ class AdminController extends Controller
     function __construct()
     {
         parent::__construct();
-    }
-
-    function index()
-    {
         if (Auth::guest()) {
             $this->app->flash('info', "You must be logged in to view the admin page.");
             $this->app->redirect('/');
@@ -23,7 +19,10 @@ class AdminController extends Controller
             $this->app->flash('info', "You must be administrator to view the admin page.");
             $this->app->redirect('/');
         }
+    }
 
+    function index()
+    {
         $variables = [
             'users' => User::all()
         ];

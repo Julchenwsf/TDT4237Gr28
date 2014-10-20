@@ -4,7 +4,7 @@
 
     <h2>Edit profile</h2>
 
-    <form action="" method="POST">
+    {{ secureForm(__controller, ["email", "bio", "age", "submit"])|raw }}
         <div id="flasherror">{{ flash.error }}</div>
 
         <label>email:</label>
@@ -17,5 +17,5 @@
         <input type="text" name="age" value="{{ user.age }}"> <br />
 
         <input type="submit" name="submit" value="Save profile">
-    </form>
+    {{ closeSecureForm()|raw }}
 {% endblock %}

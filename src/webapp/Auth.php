@@ -19,7 +19,7 @@ class Auth
             return false;
         }
 
-        return Hash::check($password, $user->getPasswordHash());
+        return Hash::check($username, $password, $user->getPasswordHash());
     }
 
     /**
@@ -56,7 +56,7 @@ class Auth
     static function isAdmin()
     {
         if (self::check()) {
-            return $_COOKIE['isadmin'] === 'yes';
+            return $_SESSION['isadmin'] === true;
         }
 
         throw new \Exception('Not logged in but called Auth::isAdmin() anyway');
@@ -65,5 +65,8 @@ class Auth
     static function logout()
     {
         session_destroy();
+        session_write_close();
+        session_start();
+        session_regenerate_id();
     }
 }

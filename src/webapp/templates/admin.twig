@@ -14,7 +14,7 @@
         <tr>
             <td>{{ user.id }}</td>
             <td><a href="/user/{{ user.username }}">{{ user.username }}</a></td>
-            <td><a href="/admin/delete/{{ user.username }}">Delete this user</a></td>
+            <td>{{ secureForm(__controller, [], "post", "/admin/delete/" ~ user.username)|raw }}<button type="submit">Delete this user</button> {{ closeSecureForm()|raw }}</td>
         </tr>
     {% endfor %}
     </table>

@@ -24,7 +24,7 @@
                 {% if isLoggedIn %}
                     Logged in as {{ loggedInUsername }}.<br>
                     <a href="{{ urlFor('editprofile') }}">Edit profile</a> <br>
-                    <a href="{{ urlFor('logout') }}">Log out</a> <br>
+                    <a href="{{ urlFor('logout') }}?t={{ logoutToken }}">Log out</a> <br>
                 {% endif %}
 
                 {% if isAdmin %}
