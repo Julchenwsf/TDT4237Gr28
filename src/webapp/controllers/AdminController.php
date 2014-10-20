@@ -32,9 +32,9 @@ class AdminController extends Controller
     function delete($username)
     {
         if (User::deleteByUsername($username) === 1) {
-            $this->app->flash('info', "Sucessfully deleted '$username'");
+            $this->app->flash('info', "Sucessfully deleted ".htmlspecialchars($username));
         } else {
-            $this->app->flash('info', "An error ocurred. Unable to delete user '$username'.");
+            $this->app->flash('info', "An error ocurred. Unable to delete user ".htmlspecialchars($username));
         }
 
         $this->app->redirect('/admin');

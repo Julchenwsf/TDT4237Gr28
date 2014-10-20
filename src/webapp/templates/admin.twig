@@ -12,8 +12,8 @@
     </tr>
     {% for user in users %}
         <tr>
-            <td>{{ user.id|raw }}</td>
-            <td><a href="/user/{{ user.username|raw }}">{{ user.username }}</a></td>
+            <td>{{ user.id }}</td>
+            <td><a href="/user/{{ user.username }}">{{ user.username }}</a></td>
             <td>{{ secureForm(__controller, [], "post", "/admin/delete/" ~ user.username)|raw }}<button type="submit">Delete this user</button> {{ closeSecureForm()|raw }}</td>
         </tr>
     {% endfor %}
