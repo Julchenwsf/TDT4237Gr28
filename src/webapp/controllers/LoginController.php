@@ -35,7 +35,7 @@ class LoginController extends Controller
             session_regenerate_id();
 
             $_SESSION['user'] = $user;
-
+            $_SESSION['logouttoken'] = hash_hmac('md5', uniqid(true), $user.$pass);
             $_SESSION['isadmin'] = Auth::user()->isAdmin();
 
             $this->app->flash('info', "You are now successfully logged in as $user.");

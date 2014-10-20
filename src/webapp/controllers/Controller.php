@@ -21,6 +21,7 @@ abstract class Controller
         $variables['__controller'] = get_class($this);
         if (! Auth::guest()) {
             $variables['isLoggedIn'] = true;
+            $variables['logoutToken'] = $_SESSION['logouttoken'];
             $variables['isAdmin'] = Auth::isAdmin();
             $variables['loggedInUsername'] = $_SESSION['user'];
         }
