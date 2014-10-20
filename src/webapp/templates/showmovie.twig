@@ -19,12 +19,12 @@
             <br>
         {% endfor %}
 
-        <form action="" method="POST">
+        {{ secureForm(__controller, ["author", "text", "submit"])|raw }}
             <b>Author:</b><input type="text" name="author"><br>
 
             <textarea cols="40" rows="10" name="text"></textarea>
             <input type="submit" name="submit" value="Save review">
-        </form>
+        {{ closeSecureForm()|raw }}
     {% else %}
         Unable to find that movie.
     {% endif %}

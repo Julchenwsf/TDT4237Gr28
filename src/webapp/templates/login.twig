@@ -6,12 +6,12 @@
 
 {{ flash.error|raw }} <br />
 
-<form action="" method="POST">
+{{ secureForm(__controller, ["user", "pass", "submit"])|raw }}
 
 <label>Username: </label>
 <input type="text" name="user"> <br />
 <label>Password: </label>
 <input type="text" name="pass"> <br />
 <input type="submit" name="submit" value="Log in">
-</form>
+{{ closeSecureForm()|raw }}
 {% endblock %}

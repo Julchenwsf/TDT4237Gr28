@@ -12,6 +12,7 @@ $app = new \Slim\Slim([
 $view = $app->view();
 $view->parserExtensions = array(
     new \Slim\Views\TwigExtension(),
+    new \tdt4237\webapp\SecureTwigExtension(),
 );
 
 try {
@@ -52,7 +53,7 @@ $app->get('/logout', $ns . 'UserController:logout')->name('logout');
 
 // Admin restricted area
 $app->get('/admin', $ns . 'AdminController:index')->name('admin');
-$app->get('/admin/delete/:username', $ns . 'AdminController:delete');
+$app->post('/admin/delete/:username', $ns . 'AdminController:delete');
 
 // Movies
 $app->get('/movies', $ns . 'MovieController:index')->name('movies');

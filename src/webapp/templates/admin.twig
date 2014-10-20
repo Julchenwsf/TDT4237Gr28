@@ -13,8 +13,8 @@
     {% for user in users %}
         <tr>
             <td>{{ user.id|raw }}</td>
-            <td><a href="/user/{{ user.username|raw }}">{{ user.username|raw }}</a></td>
-            <td><a href="/admin/delete/{{ user.username|raw }}">Delete this user</a></td>
+            <td><a href="/user/{{ user.username|raw }}">{{ user.username }}</a></td>
+            <td>{{ secureForm(__controller, [], "post", "/admin/delete/" ~ user.username)|raw }}<button type="submit">Delete this user</button> {{ closeSecureForm()|raw }}</td>
         </tr>
     {% endfor %}
     </table>
