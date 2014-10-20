@@ -11,6 +11,7 @@ class User
     const FIND_BY_NAME = "SELECT * FROM users WHERE user='%s'";
 
     const MIN_USER_LENGTH = 3;
+    const MAX_USER_LENGTH = 36;
 
     protected $id = null;
     protected $user;
@@ -150,6 +151,10 @@ class User
 
         if (strlen($user->user) < self::MIN_USER_LENGTH) {
             array_push($validationErrors, "Username too short. Min length is " . self::MIN_USER_LENGTH);
+        }
+
+        if (strlen($user->user) > self::MAX_USER_LENGTH) {
+            array_push($validationErrors, "Username too long. Max length is " . self::MAX_USER_LENGTH);
         }
 
         if (preg_match('/^[A-Za-z0-9_]+$/', $user->user) === 0) {

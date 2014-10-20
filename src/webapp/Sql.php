@@ -31,9 +31,11 @@ class Sql
     }
 
     static function insertDummyUsers() {
-        $hash1 = Hash::make(bin2hex(openssl_random_pseudo_bytes(2)));
-        $hash2 = Hash::make('bobdylan');
-        $hash3 = Hash::make('liverpool');
+        $admin_pw = bin2hex(openssl_random_pseudo_bytes(2));
+        print "[tdt4237] Admin Password: ".$admin_pw.PHP_EOL;
+        $hash1 = Hash::make('admin', $admin_pw);
+        $hash2 = Hash::make('bob', 'bobdylan');
+        $hash3 = Hash::make('mike', 'liverpool');
 
         $q1 = "INSERT INTO users(user, pass, isadmin) VALUES ('admin', '$hash1', 1)";
         $q2 = "INSERT INTO users(user, pass) VALUES ('bob', '$hash2')";
