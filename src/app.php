@@ -15,8 +15,8 @@ $view->parserExtensions = array(
 );
 
 try {
-    // Create (connect to) SQLite database in file
-    $app->db = new PDO('sqlite:app.db');
+    // Create (connect to) SQLite database in file. Disable emulate prepares for enhanced security.
+    $app->db = new PDO('sqlite:app.db', NULL, NULL, array(PDO::ATTR_EMULATE_PREPARES => false));
     // Set errormode to exceptions
     $app->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch(PDOException $e) {
