@@ -1,11 +1,10 @@
 <?php
+header('Strict-Transport-Security: max-age=31536000');
 require_once __DIR__ . '/../vendor/autoload.php';
-
-//test
 
 $app = new \Slim\Slim([
     'templates.path' => __DIR__.'/webapp/templates/',
-    'debug' => true,
+    'debug' => false,
     'view' => new \Slim\Views\Twig()
 ]);
 
