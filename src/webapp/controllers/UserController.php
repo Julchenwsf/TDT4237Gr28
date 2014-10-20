@@ -63,7 +63,7 @@ class UserController extends Controller
 
     function logout()
     {
-        if (md5($this->app->request->get('t')) === md5($_SESSION('logouttoken'))) {
+        if (md5($this->app->request->get('t')) === md5($_SESSION['logouttoken'])) {
             Auth::logout();
             $this->app->flash('info', "Successfully logged out.");
         }
