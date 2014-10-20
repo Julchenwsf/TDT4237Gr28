@@ -19,15 +19,7 @@ class Security
 	}
 
 	static function getRandomToken() {
-		$str = '';
-		if (function_exists('openssl_random_pseudo_bytes')) {
-			$str = openssl_random_pseudo_bytes(8);
-		} else {
-			for($i=0; $i < 8; $i++) {
-				$x = mt_rand(0, 255);
-				$str .= chr($x);
-			}
-		}
+		$str = openssl_random_pseudo_bytes(8);
 		return bin2hex($str);
 	}
 
