@@ -7,8 +7,6 @@ use tdt4237\webapp\Hash;
 
 class SecurityException extends \Exception {}
 
-class SecurityException extends \Exception {}
-
 class Security
 {
 	const SESSION_BASE = '1deb4ab1-3a03-4c9c-9906-84f0e5c66d09';
