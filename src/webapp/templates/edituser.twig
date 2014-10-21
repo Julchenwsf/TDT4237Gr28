@@ -17,10 +17,11 @@
         <input type="text" name="age" value="{{ user.age }}"> <br />
 
         <label>Profile Picture:</label>
-        <input type="text" name="profile_picture"> <br />
+        <input type="file" name="profile_picture"> <br />
 
-        <label>Delete Current Profile Picture?</label>
-        <input type="checkbox" name="profile_picture" value="yes"> <br />
+        <input type="hidden" name="remove_profile_picture" value="no">
+	<label>Delete Current Profile Picture?</label>
+        <input type="checkbox" name="remove_profile_picture" value="yes"> <br />
         <img src="/profile_picture/{{ user.username }}" alt="Profile Picture for {{ user.username }}" />
 
         <input type="submit" name="submit" value="Save profile">

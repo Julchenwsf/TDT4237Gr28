@@ -53,7 +53,7 @@ class Security
 
 		list($token, $field_hash) = explode('-', $validation_string.'--', 3);
 
-		$fields = array_keys($_POST);
+		$fields = array_merge(array_keys($_POST), array_keys($_FILES));
 		asort($fields);
 		$field_string = implode("\1\0", $fields);
 

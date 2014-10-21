@@ -127,8 +127,9 @@ class UserController extends Controller
                 if ($_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
                     if ($_FILES['profile_picture']['size'] <= 1000000) {
                         $finfo = new \finfo(\FILEINFO_MIME_TYPE);
-                        if (in_array($finfo->file($_FILES['profile_picture']['tmp_name']), array('image/jpeg', 'image/png', 'image/gif'), true)) {
-                            $profile_picture = ProfilePicture::save($user->getId(), $_FILES['profile_picture']['tmp_name']);
+			$type = $finfo->file($_FILES['profile_picture']['tmp_name']);
+                        if (in_array($type, array('image/jpeg', 'image/png', 'image/gif'), true)) {
+                            $profile_picture = ProfilePicture::save($user->getId(), $_FILES['profile_picture']['tmp_name'], $type);
                         } else {
                             $this->app->flashNow('error', 'Invalid file type. Please submit a GIF, PNG or JPEG file.');
                         }
