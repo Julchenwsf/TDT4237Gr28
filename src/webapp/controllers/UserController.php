@@ -3,6 +3,7 @@
 namespace tdt4237\webapp\controllers;
 
 use tdt4237\webapp\models\User;
+use tdt4237\webapp\models\ProfilePicture;
 use tdt4237\webapp\Hash;
 use tdt4237\webapp\Auth;
 
@@ -80,6 +81,17 @@ class UserController extends Controller
         ]);
     }
 
+    function showProfilePicture($username) {
+        $profile_picture = ProfilePicture::get($username);
+        if ($profile_picture === null) {
+            header($_SERVER['SERVER_PROTOCOL'].' 302 Temporary Redirect');
+            header('Location: /images/empty_profile.jpg');
+        } else {
+            header('Content-type: image/jpeg');
+            die($profile_picture);
+        }
+    }
+
     function edit()
     {
         if (Auth::guest()) {
@@ -109,6 +121,32 @@ class UserController extends Controller
             } else {
                 $user->save();
                 $this->app->flashNow('info', 'Your profile was successfully saved.');
+            }
+            $profile_picture = null;
+            if (isset($_FILES['profile_picture']['error']) && !is_array($_FILES['profile_picture']['error'])) {
+                if ($_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
+                    if ($_FILES['profile_picture']['size'] <= 1000000) {
+                        $finfo = new \finfo(\FILEINFO_MIME_TYPE);
+                        if (in_array($finfo->file($_FILES['profile_picture']['tmp_name']), array('image/jpeg', 'image/png', 'image/gif'), true)) {
+                            $profile_picture = ProfilePicture::save($user->getId(), $_FILES['profile_picture']['tmp_name']);
+                        } else {
+                            $this->app->flashNow('error', 'Invalid file type. Please submit a GIF, PNG or JPEG file.');
+                        }
+                    } else {
+                        $this->app->flashNow('error', 'Your profile picture may not exceed 1MB.');
+                    }
+                } else if ($_FILES['profile_picture']['error'] !== UPLOAD_ERR_NO_FILE) {
+                    $this->app->flashNow('error', 'There was an error uploading your profile picture.');
+                }
+            }
+            if ($profile_picture !== true) {
+                if ($profile_picture !== null) {
+                    $this->app->flashNow('error', 'There was an error saving your profile picture.');
+                }
+                $remove_profile_picture = $request->post('remove_profile_picture');
+                if ($remove_profile_picture === 'yes') {
+                    ProfilePicture::removeProfilePicture($user->getId());
+                }
             }
         }
 

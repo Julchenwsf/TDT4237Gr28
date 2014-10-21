@@ -44,6 +44,9 @@ $app->post('/user/edit', $ns . 'UserController:edit');
 // Show a user by name
 $app->get('/user/:username', $ns . 'UserController:show')->name('showuser');
 
+// Show profile picture
+$app->get('/profile_picture/:username', $ns . 'UserController:showProfilePicture')->name('profilepicture');
+
 // Show all users
 $app->get('/users', $ns . 'UserController:all');
 

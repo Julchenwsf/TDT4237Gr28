@@ -17,8 +17,8 @@ class SecureTwigExtension extends \Twig_Extension {
 		);
 	}
 
-	public function SecureForm($controller, $fields = [], $method = 'post', $action = '') {
-		return sprintf('<form method="%s" action="%s"><div style="display:none"><input type="hidden" name="%s" value="%s" /></div>', htmlentities($method), htmlentities($action), Security::POST_NAME, Security::getToken($controller, $fields));
+	public function SecureForm($controller, $fields = [], $method = 'post', $action = '', $attrs='') {
+		return sprintf('<form method="%s" %s action="%s"><div style="display:none"><input type="hidden" name="%s" value="%s" /></div>', htmlentities($method), $attrs, htmlentities($action), Security::POST_NAME, Security::getToken($controller, $fields));
 	}
 
 	public function CloseSecureForm() {

@@ -8,6 +8,7 @@
 {{ flash.error|raw }} <br />
 
 {% if user %}
+    <img src="/profile_picture/{{ user.username }}" alt="Profile Picture for {{ user.username }}" />
     <table>
         <tr>
             <th>Id</th>
