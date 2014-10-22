@@ -97,7 +97,7 @@ class BruteForceBlock {
         $db->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);*/
 
         //return the db connection object
-        return static::$app->db;
+        return self::$app->db;
     }
     //add a failed login attempt to database. returns true, or error
     public static function addFailedLoginAttempt($user_id, $ip_address){
