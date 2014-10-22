@@ -14,7 +14,7 @@ class User
     //secure
     const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin) VALUES(?, ?, ? , ? , ?, ?)";
     const UPDATE_QUERY = "UPDATE users SET email=?, age=?, bio=?, isadmin=? WHERE id=?'";
-    const FIND_BY_NAME = "SELECT * FROM users WHERE user=?";
+    const FIND_BY_NAME = "SELECT * FROM users WHERE user=? LIMIT 1";
 
     const MIN_USER_LENGTH = 3;
     const MAX_USER_LENGTH = 36;
@@ -84,7 +84,7 @@ class User
             ]);
         }
 
-        return self::$app->db->exec($query);
+       // return self::$app->db->exec($query);
     }
 
     function getId()
@@ -202,9 +202,9 @@ class User
         //$result = self::$app->db->query($query, \PDO::FETCH_ASSOC);
         //secure
         $sth = static::$app->db->prepare(self::FIND_BY_NAME);
-        + $result = $sth->execute([$username], \PDO::FETCH_ASSOC);
+        $sth->execute([$username]);
 
-        $row = $result->fetch();
+        $row = $sth->fetch(\PDO::FETCH_ASSOC);
 
         if($row == false) {
             return null;
@@ -221,7 +221,7 @@ class User
        //secure
         $query = "DELETE FROM users WHERE user=?";
         $sth = static::$app->db->prepare($query);
-        return $sth->execute($username);
+        return $sth->execute([$username]);
     }
 
     static function all()

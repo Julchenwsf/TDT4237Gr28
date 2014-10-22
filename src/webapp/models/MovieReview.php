@@ -8,7 +8,7 @@ class MovieReview
     //const SELECT_BY_ID = "SELECT * FROM moviereviews WHERE id = %s";
 
     //secure
-    const SELECT_BY_ID = "SELECT * FROM moviereviews WHERE id = ?";
+    const SELECT_BY_ID = "SELECT * FROM moviereviews WHERE movieid = ?";
 
     private $id = null;
     private $movieId;
@@ -76,7 +76,7 @@ class MovieReview
                     // insecure
                     //. "VALUES ('$movieId', '$author', '$text')";
                     //secure
-                    ."VALUES (?,?,?)";
+                    . "VALUES (?,?,?)";
         } else {
             // TODO: Update moviereview here
             // secure
@@ -105,11 +105,11 @@ class MovieReview
 
       // secure
         $sth = static::$app->db->prepare(self::SELECT_BY_ID);
-        $results = $sth->execute($id);
+        $sth->execute([$id]);
 
         $reviews = [];
 
-        foreach ($results as $row) {
+        foreach ($sth as $row) {
             $review = self::makeFromRow($row);
             array_push($reviews, $review);
         }

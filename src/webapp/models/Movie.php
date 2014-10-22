@@ -47,10 +47,10 @@ class Movie
         // secure variant
         $query = "SELECT * FROM movies WHERE id = ?";
         $sth = self::$app->db->prepare($query);
-        $result = $sth->execute([$id]);
+        $sth->execute([$id]);
 
 
-        return self::makeFromRow($result->fetch());
+        return self::makeFromRow($sth->fetch());
     }
 
     /**
