@@ -6,9 +6,15 @@ use tdt4237\webapp\Hash;
 
 class User
 {
-    const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin) VALUES('%s', '%s', '%s' , '%s' , '%s', '%s')";
-    const UPDATE_QUERY = "UPDATE users SET email='%s', age='%s', bio='%s', isadmin='%s' WHERE id='%s'";
-    const FIND_BY_NAME = "SELECT * FROM users WHERE user='%s'";
+   // insecure
+   // const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin) VALUES('%s', '%s', '%s' , '%s' , '%s', '%s')";
+   // const UPDATE_QUERY = "UPDATE users SET email='%s', age='%s', bio='%s', isadmin='%s' WHERE id='%s'";
+   // const FIND_BY_NAME = "SELECT * FROM users WHERE user='%s'";
+
+    //secure
+    const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin) VALUES(?, ?, ? , ? , ?, ?)";
+    const UPDATE_QUERY = "UPDATE users SET email=?, age=?, bio=?, isadmin=? WHERE id=?'";
+    const FIND_BY_NAME = "SELECT * FROM users WHERE user=?";
 
     const MIN_USER_LENGTH = 3;
     const MAX_USER_LENGTH = 36;
@@ -52,22 +58,30 @@ class User
     function save()
     {
         if ($this->id === null) {
-            $query = sprintf(self::INSERT_QUERY,
+           //insecure
+           // $query = sprintf(self::INSERT_QUERY,
+           // secure
+            $sth = static::$app->db->prepare(self::INSERT_QUERY);
+            return $sth->execute([
                 $this->user,
                 $this->pass,
                 $this->email,
                 $this->age,
                 $this->bio,
                 $this->isAdmin
-            );
+            ]);
         } else {
+            //insecure
             $query = sprintf(self::UPDATE_QUERY,
+            //secure
+                $sth = static::$app->db->prepare(self::UPDATE_QUERY);
+                return $sth->execute([
                 $this->email,
                 $this->age,
                 $this->bio,
                 $this->isAdmin,
                 $this->id
-            );
+            ]);
         }
 
         return self::$app->db->exec($query);
@@ -183,8 +197,13 @@ class User
      */
     static function findByUser($username)
     {
-        $query = sprintf(self::FIND_BY_NAME, $username);
-        $result = self::$app->db->query($query, \PDO::FETCH_ASSOC);
+        //insecure
+        //$query = sprintf(self::FIND_BY_NAME, $username);
+        //$result = self::$app->db->query($query, \PDO::FETCH_ASSOC);
+        //secure
+        $sth = static::$app->db->prepare(self::FIND_BY_NAME);
+        + $result = $sth->execute([$username], \PDO::FETCH_ASSOC);
+
         $row = $result->fetch();
 
         if($row == false) {
@@ -196,8 +215,13 @@ class User
 
     static function deleteByUsername($username)
     {
-        $query = "DELETE FROM users WHERE user='$username' ";
-        return self::$app->db->exec($query);
+       //insecure
+       // $query = "DELETE FROM users WHERE user='$username' ";
+       // return self::$app->db->exec($query);
+       //secure
+        $query = "DELETE FROM users WHERE user=?";
+        $sth = static::$app->db->prepare($query);
+        return $sth->execute($username);
     }
 
     static function all()

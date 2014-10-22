@@ -4,7 +4,11 @@ namespace tdt4237\webapp\models;
 
 class MovieReview
 {
-    const SELECT_BY_ID = "SELECT * FROM moviereviews WHERE id = %s";
+    // insecure
+    //const SELECT_BY_ID = "SELECT * FROM moviereviews WHERE id = %s";
+
+    //secure
+    const SELECT_BY_ID = "SELECT * FROM moviereviews WHERE id = ?";
 
     private $id = null;
     private $movieId;
@@ -69,12 +73,18 @@ class MovieReview
 
         if ($this->id === null) {
             $query = "INSERT INTO moviereviews (movieid, author, text) "
-                   . "VALUES ('$movieId', '$author', '$text')";
+                    // insecure
+                    //. "VALUES ('$movieId', '$author', '$text')";
+                    //secure
+                    ."VALUES (?,?,?)";
         } else {
             // TODO: Update moviereview here
         }
-
-        return static::$app->db->exec($query);
+       //insecure
+       //return static::$app->db->exec($query);
+       //secure
+        $sth = static::$app->db->prepare($query);
+        return $sth->execute([$movieId, $author, $text]);
     }
 
     static function makeEmpty()
@@ -87,8 +97,13 @@ class MovieReview
      */
     static function findByMovieId($id)
     {
-        $query = "SELECT * FROM moviereviews WHERE movieid = $id";
-        $results = self::$app->db->query($query);
+      // insecure
+      //  $query = "SELECT * FROM moviereviews WHERE movieid = $id";
+      //  $results = self::$app->db->query($query);
+
+      // secure
+        $sth = static::$app->db->prepare(self::SELECT_BY_ID);
+        $results = $sth->execute($id);
 
         $reviews = [];
 
