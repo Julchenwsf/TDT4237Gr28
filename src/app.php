@@ -1,4 +1,6 @@
 <?php
+ini_set('session.cookie_httponly', '1');
+ini_set('session.cookie_secure', '1');
 header('Strict-Transport-Security: max-age=31536000');
 require_once __DIR__ . '/../vendor/autoload.php';
 
