@@ -30,7 +30,8 @@ class ProfilePicture
             if ($imagick->readImage($file_location) === TRUE) {
                 $imagick->stripImage();
                 list($w, $h) = $imagick->getSize();
-                $dimension = min($w, $h);
+                if (min($w, $h) < 1) return -1;
+                $dimension = max($w, $h);
                 $scaling_factor = 200/$dimension;
                 if ($imagick->setImageFormat('jpeg') === TRUE) {
                     $imagick->setImageCompression(\Imagick::COMPRESSION_JPEG);
@@ -48,6 +49,7 @@ class ProfilePicture
             $type = explode('/', $mime, 2);
             $fn = 'imagecreatefrom'.$type[1];
             list($w, $h) = getimagesize($file_location);
+            if (min($w, $h) < 1) return -1;
             $dimension = max($w, $h);
             $scaling_factor = 200/$dimension;
             $source = $fn($file_location);
