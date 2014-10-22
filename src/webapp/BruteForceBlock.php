@@ -71,17 +71,11 @@ class BruteForceBlock {
 
 	static $app;
 
-    /*
+
     //database config
     private static $_db = [
-        'driver' => DB_DRIVER,
-        'host'	=> DB_HOST,
-        'database'	=> DB_DATABASE,
-        'charset' => DB_CHARSET,
-        'username' => DB_USERNAME,
-        'password' => DB_PASSWORD,
         'auto_clear' => true
-    ];*/
+    ];
 
     //time frame to use when retrieving the number of recent failed logins from database
     private static $time_frame_minutes = 10;
@@ -201,12 +195,12 @@ class BruteForceBlock {
 
             }
             //clear database if config set
-            if(self::$_db['auto_clear'] == true){
+            if(self::$db['auto_clear'] == true){
                 //attempt to delete all records that are no longer recent/relevant
                 try{
                     //get current timestamp
                     $now = date('Y-m-d H:i:s');
-                    $stmt = $db->query('DELETE from user_failed_logins WHERE attempted_at < DATE_SUB(NOW(), INTERVAL '.(self::$time_frame_minutes * 2).' MINUTE)');
+                    $stmt = $db->query('DELETE from user_failed_logins WHERE attempted_at < DATE(\'NOW\', \'-'.(self::$time_frame_minutes * 2).' MINUTES\')');
                     $stmt->execute();
 
                 } catch(PDOException $ex){
