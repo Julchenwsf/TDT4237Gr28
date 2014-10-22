@@ -1,10 +1,10 @@
 <?php
 
-namespace tdt4237\webapp\controllers;
+namespace tdt4237\webapp;
 
 use tdt4237\webapp\Auth;
 
-class LoginController extends Controller
+class LoginController extends controllers\Controller
 {
     function __construct()
     {
