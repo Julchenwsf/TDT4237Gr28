@@ -25,7 +25,7 @@ class LoginController extends Controller
 
     function login()
     {
-        $BFBresponse = BruteForceBlock::getLoginStatus();
+        $BFBresponse = BruteForceBlock::getLoginStatus(get_client_ip());
         if ($BFBresponse['status']=='delay') {
             //time delay required before next login
             $this->app->flash('error', "Wait $BFBresponse[message] seconds before login.");
