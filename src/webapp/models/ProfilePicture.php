@@ -48,7 +48,7 @@ class ProfilePicture
             $type = explode('/', $mime, 2);
             $fn = 'imagecreatefrom'.$type[1];
             list($w, $h) = getimagesize($file_location);
-            $dimension = min($w, $h);
+            $dimension = max($w, $h);
             $scaling_factor = 200/$dimension;
             $source = $fn($file_location);
             $profile = imagecreatetruecolor(round($w * $scaling_factor), round($h * $scaling_factor));
