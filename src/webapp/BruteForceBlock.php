@@ -200,7 +200,7 @@ class BruteForceBlock {
                 try{
                     //get current timestamp
                     $now = date('Y-m-d H:i:s');
-                    $stmt = $db->query('DELETE from user_failed_logins WHERE attempted_at < DATE(\'NOW\', \'-'.(self::$time_frame_minutes * 2).' MINUTES\')');
+                    $stmt = $_db->query('DELETE from user_failed_logins WHERE attempted_at < DATE(\'NOW\', \'-'.(self::$time_frame_minutes * 2).' MINUTES\')');
                     $stmt->execute();
 
                 } catch(PDOException $ex){
