@@ -195,12 +195,12 @@ class BruteForceBlock {
 
             }
             //clear database if config set
-            if(self::$db['auto_clear'] == true){
+            if(self::$_db['auto_clear'] == true){
                 //attempt to delete all records that are no longer recent/relevant
                 try{
                     //get current timestamp
                     $now = date('Y-m-d H:i:s');
-                    $stmt = $_db->query('DELETE from user_failed_logins WHERE attempted_at < DATE(\'NOW\', \'-'.(self::$time_frame_minutes * 2).' MINUTES\')');
+                    $stmt = $db->query('DELETE from user_failed_logins WHERE attempted_at < DATE(\'NOW\', \'-'.(self::$time_frame_minutes * 2).' MINUTES\')');
                     $stmt->execute();
 
                 } catch(PDOException $ex){
