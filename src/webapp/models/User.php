@@ -175,6 +175,10 @@ class User
             array_push($validationErrors, 'Username can only contain letters and numbers');
         }
 
+        if (!filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
+            array_push($validationErrors, 'Invalid email');
+        }
+
         return $validationErrors;
     }
 
@@ -182,11 +186,14 @@ class User
     {
         $age = $user->getAge();
 
-        if ($age >= 0 && $age <= 150) {
-            return true;
-        }
+	return filter_var($age, FILTER_VALIDATE_INT, array('options' => array('min_range' => 0, 'max_range' => 150)));
+    }
 
-        return false;
+    static function validateEmail(User $user)
+    {
+        $email = $user->getEmail();
+
+	return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
     /**
