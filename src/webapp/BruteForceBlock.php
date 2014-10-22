@@ -69,6 +69,8 @@ class BruteForceBlock {
         1000 => 3600	//delay of one hour if more than 1000 requests in the $time_frame_minutes
     ];
 
+	static $app;
+
     /*
     //database config
     private static $_db = [
@@ -237,3 +239,4 @@ class BruteForceBlock {
         }
     }
 }
+BruteForceBlock::$app = \Slim\Slim::getInstance();
