@@ -162,7 +162,7 @@ class BruteForceBlock {
         //attempt to retrieve latest failed login attempts
         try{
             //get all failed attempst within time frame
-            $get_number = $db->query('SELECT * FROM user_failed_logins WHERE ip_address = ' . ip2long($ip) . ' AND attempted_at > DATE_SUB(NOW(), \'-'.self::$time_frame_minutes.' minutes\')');
+            $get_number = $db->query('SELECT * FROM user_failed_logins WHERE ip_address = ' . ip2long($ip) . ' AND attempted_at > DATE(\'now\', \'-'.self::$time_frame_minutes.' minutes\')');
             $number_recent_failed = $get_number->rowCount();
             //reverse order of settings, for iteration
             krsort($throttle_settings);
