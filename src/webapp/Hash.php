@@ -22,19 +22,9 @@ class Hash
         return crypt($tmp_password, $prefix);
     }
 
-    static function ctstrcmp($str1, $str2) {
-        $res = $str1 ^ $str2;
-        $l = strlen($res);
-        $rv = strlen($str1) ^ strlen($str2);
-        for ($i = 0; $i < $l; $i++) {
-            $rv |= ord($res[$i]);
-        }
-        return !!$rv;
-    }
-
     static function check($username, $plaintext, $hash)
     {
         $tmp_password = hash_hmac('sha512', $plaintext, $username, TRUE);
-        return !self::ctstrcmp(crypt($tmp_password, $hash), $hash);
+        return !hash_equals(crypt($tmp_password, $hash), $hash);
     }
 }
