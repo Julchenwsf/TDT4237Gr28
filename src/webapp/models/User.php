@@ -72,7 +72,7 @@ class User
             ]);
         } else {
             //insecure
-            $query = sprintf(self::UPDATE_QUERY,
+            //$query = sprintf(self::UPDATE_QUERY,
             //secure
                 $sth = static::$app->db->prepare(self::UPDATE_QUERY);
                 return $sth->execute([
