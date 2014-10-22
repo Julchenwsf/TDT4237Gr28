@@ -79,6 +79,8 @@ class MovieReview
                     ."VALUES (?,?,?)";
         } else {
             // TODO: Update moviereview here
+            // secure
+            $query = "UPDATE moviereviews SET movieid=?, author=?, text=? WHERE movieid = ?";
         }
        //insecure
        //return static::$app->db->exec($query);
