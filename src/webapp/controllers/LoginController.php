@@ -1,10 +1,11 @@
 <?php
 
-namespace tdt4237\webapp;
+namespace tdt4237\webapp\controllers;
 
 use tdt4237\webapp\Auth;
+use tdt4237\webapp\BruteForceBlock;
 
-class LoginController extends controllers\Controller
+class LoginController extends Controller
 {
     function __construct()
     {
