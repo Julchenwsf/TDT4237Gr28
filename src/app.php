@@ -56,6 +56,16 @@ $app->post('/user/new', $ns . 'UserController:create');
 $app->get('/user/edit', $ns . 'UserController:edit')->name('editprofile');
 $app->post('/user/edit', $ns . 'UserController:edit');
 
+// Set new password
+$app->get('/user/newpassword', $ns . 'UserController:newpassword')->name('newpassword');
+$app->post('/user/newpassword', $ns . 'UserController:newpassword');
+
+// Password reset token
+$app->get('/user/reset', $ns . 'UserController:passwordRecovery')->name('newpassword');
+$app->post('/user/reset', $ns . 'UserController:passwordRecovery');
+
+$app->get('/user/reset/:token', $ns . 'UserController:passwordRecovery');
+
 // Show a user by name
 $app->get('/user/:username', $ns . 'UserController:show')->name('showuser');
 

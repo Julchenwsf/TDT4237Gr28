@@ -157,4 +157,103 @@ class UserController extends Controller
 
         $this->render('edituser.twig', ['user' => $user]);
     }
+
+    function passwordRecovery($token = null) {
+        if (!Auth::guest()) {
+            $username = Auth::user()->getUserName();
+            $this->app->flash('info', 'You are already logged in as ' . $username);
+            $this->app->redirect('/');
+        }
+        if (!empty($token)) {
+            $request = $this->app->request;
+            $username = '';
+            if ($this->app->request->isPost()) {
+                $username = $request->post('user');
+                $user = User::findByUser($username);
+                if ($user) {
+                    $time = time();
+                    $secret_message = implode("\1", array($time, $username, $user->getEmail()));
+                    $signature = hash_hmac('sha256', $token, $user->getPasswordHash(), TRUE);
+                    $plain_token = $user."\2".$time."\2".$signature;
+                    $token = openssl_encrypt($plain_token, 'aes-128-cbc', Security::HASH_KEY, 0, Security::HASH_KEY);
+                    if ($token !== false) {
+                        $name = 'Movie Reviews';
+                        // NB: Canonical names must be used, or else SERVER_NAME may be inaccurate
+                        $email = 'moviereviews-noreply@'.$_SERVER['SERVER_NAME'];
+                        $recipient = $user->getEmail();
+                        $mail_body = "https://".$_SERVER['SERVER_NAME'].'/user/reset/'.bin2hex($token);
+                        $subject = 'Reset your account password at Movie Reviews';
+                        $header = 'From: '.$name.' <'.$email.'>';
+                        mail($recipient, $subject, $mail_body, $header);
+                        $this->app->flash('info', 'Password recovery email sent.');
+                        $this->app->redirect('/');
+                    }
+                    $this->app->flashNow('error', 'Unexpected error.');
+                } else {
+                    $this->app->flashNow('error', 'User not found.');
+                }
+            }
+            $this->render('recoverPassword.twig', ['username' => $username]);
+        } else {
+            $token = hex2bin($token);
+            if (!empty($token)) {
+                $plain_token = openssl_decrypt($token, 'aes-128-cbc', Security::HASH_KEY, 0, Security::HASH_KEY);
+                if ($plain_token !== false) {
+                    $parts = explode("\2", $plain_token, 3);
+                    if (count($parts) === 3) {
+                        $time = time();
+                        if ($time > $parts[1] && ($time - $parts[1]) < 84600 /* 24 hours */) {
+                            $username = $parts[0];
+                            $user = User::findByUser($username);
+                            if ($user) {
+                                $secret_message = implode("\1", array($parts[1], $username, $user->getEmail()));
+                                $signature = hash_hmac('sha256', $token, $user->getPasswordHash(), TRUE);
+                                if (hash_equals($signature, $parts[2])) {
+                                    $_SESSION['passwordResetUser'] = $username;
+                                    $this->app->redirect('/user/newpassword');
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            $this->app->flash('info', 'Invalid or expired password reset token.');
+            $this->app->redirect('/');           
+        }
+    }
+
+    function newpassword() {
+        if (!Auth::guest()) {
+            $username = Auth::user()->getUserName();
+            $this->app->flash('info', 'You are already logged in as ' . $username);
+            $this->app->redirect('/');
+        }
+        if (!array_key_exists('passwordResetUser', $_SESSION) && !empty($_SESSION['passwordResetUser'])) {
+            $username = Auth::user()->getUserName();
+            $this->app->flash('info', 'You are already logged in as ' . $username);
+            $this->app->redirect('/user/reset');
+        }
+        $username = $_SESSION['passwordResetUser'];
+        if ($this->app->request->isPost()) {
+            $pass = $request->post('pass');
+
+            if (strlen($pass) < 8) {
+                $this->app->flashNow('error', 'The password must be at least 8 characters long.');
+                $this->render('newPasswordForm.twig', ['username' => $username]);
+                return;
+            }
+
+            $hashed = Hash::make($username, $pass);
+            $user = User::findByUser($username);
+            if ($user) {
+                $user->setHash($hashed);
+                $user->save();
+                $_SESSION['passwordResetUser'] = '';
+                unset($_SESSION['passwordResetUser']);
+                $this->app->flash('info', 'Password updated. Now log in.');
+                $this->app->redirect('/login');
+            }
+        }
+        $this->render('newPasswordForm.twig', ['username' => $username]);
+    }
 }

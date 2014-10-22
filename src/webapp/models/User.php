@@ -13,7 +13,7 @@ class User
 
     //secure
     const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin) VALUES(?, ?, ? , ? , ?, ?)";
-    const UPDATE_QUERY = "UPDATE users SET email=?, age=?, bio=?, isadmin=? WHERE id=?";
+    const UPDATE_QUERY = "UPDATE users SET pass=?, email=?, age=?, bio=?, isadmin=? WHERE id=?";
     const FIND_BY_NAME = "SELECT * FROM users WHERE user=? LIMIT 1";
 
     const MIN_USER_LENGTH = 3;
@@ -76,6 +76,7 @@ class User
             //secure
                 $sth = static::$app->db->prepare(self::UPDATE_QUERY);
                 return $sth->execute([
+                $this->pass,
                 $this->email,
                 $this->age,
                 $this->bio,
