@@ -4,6 +4,7 @@ namespace tdt4237\webapp\controllers;
 
 use tdt4237\webapp\Auth;
 use tdt4237\webapp\BruteForceBlock;
+use tdt4237\webapp\models\User;
 
 class LoginController extends Controller
 {
