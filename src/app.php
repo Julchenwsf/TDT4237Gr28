@@ -80,7 +80,7 @@ $app->get('/user/newpassword', $ns . 'UserController:newpassword')->name('newpas
 $app->post('/user/newpassword', $ns . 'UserController:newpassword');
 
 // Password reset token
-$app->get('/user/reset', $ns . 'UserController:passwordRecovery')->name('newpassword');
+$app->get('/user/reset', $ns . 'UserController:passwordRecovery')->name('passwordreset');
 $app->post('/user/reset', $ns . 'UserController:passwordRecovery');
 
 $app->get('/user/reset/:token', $ns . 'UserController:passwordRecovery');
