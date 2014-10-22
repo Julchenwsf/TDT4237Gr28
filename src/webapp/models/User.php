@@ -13,7 +13,7 @@ class User
 
     //secure
     const INSERT_QUERY = "INSERT INTO users(user, pass, email, age, bio, isadmin) VALUES(?, ?, ? , ? , ?, ?)";
-    const UPDATE_QUERY = "UPDATE users SET email=?, age=?, bio=?, isadmin=? WHERE id=?'";
+    const UPDATE_QUERY = "UPDATE users SET email=?, age=?, bio=?, isadmin=? WHERE id=?";
     const FIND_BY_NAME = "SELECT * FROM users WHERE user=? LIMIT 1";
 
     const MIN_USER_LENGTH = 3;
