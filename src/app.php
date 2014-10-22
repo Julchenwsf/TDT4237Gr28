@@ -12,7 +12,7 @@ if (!function_exists('hash_equals')) {
         for ($i = 0; $i < $l; $i++) {
             $rv |= ord($res[$i]);
         }
-        return !!$rv;
+        return !$rv;
     }
 }
 

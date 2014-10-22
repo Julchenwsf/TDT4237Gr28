@@ -25,6 +25,6 @@ class Hash
     static function check($username, $plaintext, $hash)
     {
         $tmp_password = hash_hmac('sha512', $plaintext, $username, TRUE);
-        return !hash_equals(crypt($tmp_password, $hash), $hash);
+        return hash_equals(crypt($tmp_password, $hash), $hash);
     }
 }

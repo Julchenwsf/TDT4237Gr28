@@ -14,8 +14,8 @@ class Security
 	const MAX_TOKENS = 64;
 	const POST_NAME = '__form_token';
 
-    function __construct()
-    {
+	function __construct()
+	{
 	}
 
 	static function getRandomToken() {
