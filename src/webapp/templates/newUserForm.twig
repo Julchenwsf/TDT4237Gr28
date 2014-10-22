@@ -7,10 +7,12 @@
 <b>{{ flash.info|raw }}</b> <br />
 <b>{{ flash.error|raw }}</b> <br />
 
-{{ secureForm(__controller, ["user", "pass", "submit"])|raw }}
+{{ secureForm(__controller, ["user", "pass", "email", "submit"])|raw }}
 
 <label>Username: </label>
 <input type="text" name="user" value="{{ username }}"> <br />
+<label>Email: </label>
+<input type="text" name="email" value="{{ email }}"> <br />
 <label>Password: </label>
 <input type="password" name="pass"> <br />
 <input type="submit" name="submit" value="Create new user">

@@ -29,11 +29,12 @@ class UserController extends Controller
     {
         $request = $this->app->request;
         $username = $request->post('user');
+        $email = $request->post('email');
         $pass = $request->post('pass');
 
         if (strlen($pass) < 8) {
             $this->app->flashNow('error', 'The password must be at least 8 characters long.');
-            $this->render('newUserForm.twig', ['username' => $username]);
+            $this->render('newUserForm.twig', ['username' => $username, 'email' => $email]);
             return;
         }
 
@@ -41,6 +42,7 @@ class UserController extends Controller
 
         $user = User::makeEmpty();
         $user->setUsername($username);
+        $user->setEmail($email);
         $user->setHash($hashed);
 
         $validationErrors = User::validate($user);
@@ -118,6 +120,8 @@ class UserController extends Controller
 
             if (! User::validateAge($user)) {
                 $this->app->flashNow('error', 'Age must be between 0 and 150.');
+            } else if (! User::validateEmail($user)) {
+                $this->app->flashNow('error', 'The email address is invalid.');
             } else {
                 $user->save();
                 $this->app->flashNow('info', 'Your profile was successfully saved.');
