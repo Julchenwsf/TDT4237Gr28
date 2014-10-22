@@ -52,7 +52,7 @@ class LoginController extends Controller
             $this->app->redirect('/');
         } else {
             $userFound = User::findByUser($user);
-            $user_id = $userFound == null ? 0 : $userFound->id;
+            $user_id = $userFound == null ? 0 : $userFound->getId();
             $ip_addressget = get_client_ip();
             BruteForceBlock::addFailedLoginAttempt($user_id, $ip_addressget);
             $this->app->flashNow('error', 'Incorrect user/pass combination.');
