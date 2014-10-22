@@ -6,6 +6,7 @@ use tdt4237\webapp\models\User;
 use tdt4237\webapp\models\ProfilePicture;
 use tdt4237\webapp\Hash;
 use tdt4237\webapp\Auth;
+use tdt4237\webapp\Security;
 
 class UserController extends Controller
 {
@@ -131,7 +132,7 @@ class UserController extends Controller
                 if ($_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
                     if ($_FILES['profile_picture']['size'] <= 1000000) {
                         $finfo = new \finfo(\FILEINFO_MIME_TYPE);
-			$type = $finfo->file($_FILES['profile_picture']['tmp_name']);
+                        $type = $finfo->file($_FILES['profile_picture']['tmp_name']);
                         if (in_array($type, array('image/jpeg', 'image/png', 'image/gif'), true)) {
                             $profile_picture = ProfilePicture::save($user->getId(), $_FILES['profile_picture']['tmp_name'], $type);
                         } else {
@@ -164,7 +165,7 @@ class UserController extends Controller
             $this->app->flash('info', 'You are already logged in as ' . $username);
             $this->app->redirect('/');
         }
-        if (!empty($token)) {
+        if (empty($token)) {
             $request = $this->app->request;
             $username = '';
             if ($this->app->request->isPost()) {
@@ -173,9 +174,9 @@ class UserController extends Controller
                 if ($user) {
                     $time = time();
                     $secret_message = implode("\1", array($time, $username, $user->getEmail()));
-                    $signature = hash_hmac('sha256', $token, $user->getPasswordHash(), TRUE);
-                    $plain_token = $user."\2".$time."\2".$signature;
-                    $token = openssl_encrypt($plain_token, 'aes-128-cbc', Security::HASH_KEY, 0, Security::HASH_KEY);
+                    $signature = hash_hmac('sha256', $secret_message, $user->getPasswordHash(), TRUE);
+                    $plain_token = $username."\2".$time."\2".$signature;
+                    $token = openssl_encrypt($plain_token, 'aes-256-cbc', Security::HASH_KEY, 0, hash('md5', Security::HASH_KEY, TRUE));
                     if ($token !== false) {
                         $name = 'Movie Reviews';
                         // NB: Canonical names must be used, or else SERVER_NAME may be inaccurate
@@ -185,7 +186,8 @@ class UserController extends Controller
                         $subject = 'Reset your account password at Movie Reviews';
                         $header = 'From: '.$name.' <'.$email.'>';
                         mail($recipient, $subject, $mail_body, $header);
-                        $this->app->flash('info', 'Password recovery email sent.');
+                        // TODO: Mail body should *not* be here, but it is for debugging purposes.
+                        $this->app->flash('info', 'Password recovery email sent. [EMAIL CONTENT: '.$mail_body.']');
                         $this->app->redirect('/');
                     }
                     $this->app->flashNow('error', 'Unexpected error.');
@@ -197,7 +199,7 @@ class UserController extends Controller
         } else {
             $token = hex2bin($token);
             if (!empty($token)) {
-                $plain_token = openssl_decrypt($token, 'aes-128-cbc', Security::HASH_KEY, 0, Security::HASH_KEY);
+                $plain_token = openssl_decrypt($token, 'aes-256-cbc', Security::HASH_KEY, 0, hash('md5', Security::HASH_KEY, TRUE));
                 if ($plain_token !== false) {
                     $parts = explode("\2", $plain_token, 3);
                     if (count($parts) === 3) {
@@ -207,7 +209,7 @@ class UserController extends Controller
                             $user = User::findByUser($username);
                             if ($user) {
                                 $secret_message = implode("\1", array($parts[1], $username, $user->getEmail()));
-                                $signature = hash_hmac('sha256', $token, $user->getPasswordHash(), TRUE);
+                                $signature = hash_hmac('sha256', $secret_message, $user->getPasswordHash(), TRUE);
                                 if (hash_equals($signature, $parts[2])) {
                                     $_SESSION['passwordResetUser'] = $username;
                                     $this->app->redirect('/user/newpassword');
@@ -235,6 +237,7 @@ class UserController extends Controller
         }
         $username = $_SESSION['passwordResetUser'];
         if ($this->app->request->isPost()) {
+            $request = $this->app->request;
             $pass = $request->post('pass');
 
             if (strlen($pass) < 8) {
