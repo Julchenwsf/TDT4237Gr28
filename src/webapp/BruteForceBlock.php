@@ -120,7 +120,7 @@ class BruteForceBlock {
         }
     }
     //get the current login status. either safe, delay, catpcha, or error
-    public static function getLoginStatus($options = null){
+    public static function getLoginStatus($ip, $options = null){
         //get db connection
         $db = BruteForceBlock::_databaseConnect();
 
@@ -162,7 +162,7 @@ class BruteForceBlock {
         //attempt to retrieve latest failed login attempts
         try{
             //get all failed attempst within time frame
-            $get_number = $db->query('SELECT * FROM user_failed_logins WHERE attempted_at > DATE_SUB(NOW(), INTERVAL '.self::$time_frame_minutes.' MINUTE)');
+            $get_number = $db->query('SELECT * FROM user_failed_logins WHERE ip_address = INET_ATON("'.$ip.'") AND attempted_at > DATE_SUB(NOW(), -'.self::$time_frame_minutes.' minutes)');
             $number_recent_failed = $get_number->rowCount();
             //reverse order of settings, for iteration
             krsort($throttle_settings);
