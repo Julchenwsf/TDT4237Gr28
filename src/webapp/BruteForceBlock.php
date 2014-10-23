@@ -130,7 +130,7 @@ class BruteForceBlock {
         $row = null;
         $latest_failed_attempt_datetime = null;
         try{
-			$stmt = $db->query('DROP TABLE `user_failed_logins`');
+			//$stmt = $db->query('DROP TABLE `user_failed_logins`');
 			$stmt = $db->query('CREATE TABLE IF NOT EXISTS `user_failed_logins` (`id` integer PRIMARY KEY,`ip_address` string DEFAULT NULL,`attempted_at` datetime NOT NULL)');
 			$stmt = $db->query('SELECT MAX(attempted_at) AS attempted_at FROM user_failed_logins');
             $latest_failed_logins = $stmt->rowCount();
