@@ -61,7 +61,7 @@ try {
 }
 
 /** @var $BFBresponse answer about if the IP should be throttled/banned or not */
-$BFBresponse = IPThrottlingGeneral::getLoginStatus(get_client_ip());
+$BFBresponse = IPThrottlingGeneral::getRequestStatus(get_client_ip());
 if ($BFBresponse['status']=='delay') {
 	//time delay required before next login (or general request)
 	$this->app->flash('error', "Wait $BFBresponse[message] seconds before next request.");
@@ -69,7 +69,7 @@ if ($BFBresponse['status']=='delay') {
 	die();
 }
 
-IPThrottlingGeneral::addFailedLoginAttempt(get_client_ip());
+IPThrottlingGeneral::addRequest(get_client_ip());
 
 $ns ='tdt4237\\webapp\\controllers\\'; 
 

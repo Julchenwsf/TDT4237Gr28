@@ -39,7 +39,7 @@ class IPThrottlingGeneral {
         }
     }
     //get the current login status. either safe, delay, catpcha, or error
-    public static function getLoginStatus($ip, $options = null){
+    public static function getRequestStatus($ip, $options = null){
         //get db connection
         $db = IPThrottlingGeneral::_databaseConnect();
 
