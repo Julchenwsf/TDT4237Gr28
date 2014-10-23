@@ -29,7 +29,7 @@ class LoginController extends Controller
         if ($BFBresponse['status']=='delay') {
             //time delay required before next login
             $this->app->flash('error', "Wait $BFBresponse[message] seconds before login.");
-            $this->app->redirect('/');
+            //$this->app->redirect('/');
             die();
         }
 
