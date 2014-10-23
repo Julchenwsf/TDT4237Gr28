@@ -1,32 +1,25 @@
 <?php
 namespace tdt4237\webapp;
-
     /**
-     * 				Brute Force Block class
-     *
-     * 	Implementation by Evan Francis for use in AlpineAuth library, 2014.
-     *  Inspired by work of Corey Ballou, http://stackoverflow.com/questions/2090910/how-can-i-throttle-user-login-attempts-in-php.
-     * 	MIT License http://opensource.org/licenses/MIT
-     *
-    ======================== 	Setup 	  ===============================
+     	Inspiration has been taken from code found on Internet here:
+
+	  Brute Force Block class
+
+		Implementation by Evan Francis for use in AlpineAuth library, 2014.
+       Inspired by work of Corey Ballou, http://stackoverflow.com/questions/2090910/how-can-i-throttle-user-login-attempts-in-php.
+      	MIT License http://opensource.org/licenses/MIT
+
+	  and changed and adapted by Group 28 of Software Security
+
+    ======================== 	Setup 	  ========================
     1) setup database connection in $_db array.
     1a. The 'auto_clear' option determines whether or not older database entries are cleared automatically
     2) (optional) set default throttle settings in $default_throttle_settings_array
 
-    ==================== To Create MySQL Database ====================
-    CREATE TABLE IF NOT EXISTS `user_failed_logins` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `user_id` bigint(20) NOT NULL,
-    `ip_address` int(11) unsigned DEFAULT NULL,
-    `attempted_at` datetime NOT NULL,
-    PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
-
-    ==================== To Create SQLite Database ====================
+    ==================== To Create SQLite Database ===============
     CREATE TABLE IF NOT EXISTS `user_failed_logins` (
     `id` integer PRIMARY KEY,
-    `user_id` bigint(20) NOT NULL,
-    `ip_address` int(11) DEFAULT NULL,
+    `ip_address` string DEFAULT NULL,
     `attempted_at` datetime NOT NULL
     );
 
@@ -34,25 +27,23 @@ namespace tdt4237\webapp;
     === get login status. use this when building your login form ==
     $BFBresponse = BruteForceBlock::getLoginStatus();
     switch ($BFBresponse['status']){
-    case 'safe':
-    //safe to login
-    break;
-    case 'error':
-    //error occured. get message
-    $error_message = $BFBresponse['message'];
-    break;
-    case 'delay':
-    //time delay required before next login
-    $remaining_delay_in_seconds = $BFBresponse['message'];
-    break;
-    case 'captcha':
-    //captcha required
-    break;
-
+		case 'safe':
+		//safe to login
+		break;
+		case 'error':
+		//error occured. get message
+		$error_message = $BFBresponse['message'];
+		break;
+		case 'delay':
+		//time delay required before next login
+		$remaining_delay_in_seconds = $BFBresponse['message'];
+		break;
+		case 'captcha': //captcha required
+		break;
     }
 
     == add a failed login attempt ==
-    $BFBresponse = BruteForceBlock::addFailedLoginAttempt($user_id, $ip_address);
+    $BFBresponse = BruteForceBlock::addFailedLoginAttempt($ip_address);
 
     == clear the database ==
     $BFBresponse = BruteForceBlock::clearDatabase();
@@ -64,8 +55,7 @@ namespace tdt4237\webapp;
 class BruteForceBlock {
     // array of throttle settings. # failed_attempts => response
     private static $default_throttle_settings = [
-        3 => 10, 			//delay in seconds
-        150 => 60, 			//delay in seconds
+        100 => 6, 			//delay in seconds
         1000 => 3600	//delay of one hour if more than 1000 requests in the $time_frame_minutes
     ];
 
@@ -81,17 +71,7 @@ class BruteForceBlock {
     private static $time_frame_minutes = 10;
 
     //setup and return database connection
-    private static function _databaseConnect(){
-        //connect to database
-        /*$db = new \PDO(self::$_db['driver'].
-            ':host='.self::$_db['host'].
-            ';dbname='.self::$_db['database'].
-            ';charset='.self::$_db['charset'],
-            DB_USERNAME, DB_PASSWORD);
-
-        $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        $db->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);*/
-
+    private static function _databaseConnect() {
         //return the db connection object
         return self::$app->db;
     }
@@ -105,11 +85,9 @@ class BruteForceBlock {
 
         //attempt to insert failed login attempt
         try{
-	            $stmt = $db->query('INSERT INTO user_failed_logins VALUES (null,"'.$ip_address.'", datetime(\'now\'))');
-            //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	        $db->query('INSERT INTO user_failed_logins VALUES (null,"'.$ip_address.'", datetime(\'now\'))');
             return true;
         } catch(PDOException $ex){
-            //return errors
             return $ex;
         }
     }
@@ -135,8 +113,7 @@ class BruteForceBlock {
 			$stmt = $db->query('SELECT MAX(attempted_at) AS attempted_at FROM user_failed_logins');
             $row = $stmt->fetch();
 			date_default_timezone_set('UTC');
-			echo $row['attempted_at'];
-            $latest_failed_attempt_datetime = (int) date('U', strtotime($row['attempted_at'])); //get latest attempt's timestamp
+			$latest_failed_attempt_datetime = (int) date('U', strtotime($row['attempted_at'])); //get latest attempt's timestamp
 			echo $latest_failed_attempt_datetime;
 		} catch(PDOException $ex){
             //return error
@@ -158,11 +135,9 @@ class BruteForceBlock {
         //attempt to retrieve latest failed login attempts
         try{
             //get all failed attempst within time frame
-			echo " " . 'SELECT * FROM user_failed_logins WHERE ip_address = "' . $ip . '"' ;
-            $get_number = $db->query('SELECT count(*) as conta FROM user_failed_logins WHERE ip_address = "' . $ip . '" AND attempted_at > DATETIME(\'now\', \'-'.self::$time_frame_minutes.' minutes\')');
+			$get_number = $db->query('SELECT count(*) as conta FROM user_failed_logins WHERE ip_address = "' . $ip . '" AND attempted_at > DATETIME(\'now\', \'-'.self::$time_frame_minutes.' minutes\')');
             $number_recent_failed = $get_number->fetchColumn(0);
-			echo "Number of attempts " . $number_recent_failed . " ";
-            //reverse order of settings, for iteration
+			//reverse order of settings, for iteration
             krsort($throttle_settings);
 
             //if number of failed attempts is >= the minimum threshold in throttle_settings, react
@@ -174,8 +149,7 @@ class BruteForceBlock {
                         if (is_numeric($delay)) {
                             //find the time of the next allowed login
                             $next_login_minimum_time = $latest_failed_attempt_datetime + $delay;
-	echo time() . " " .  $next_login_minimum_time . " " . $delay;
-                            //if the next allowed login time is in the future, calculate the remaining delay
+	                        //if the next allowed login time is in the future, calculate the remaining delay
                             if(time() < $next_login_minimum_time){
                                 $remaining_delay = $next_login_minimum_time - time();
                                 // add status to response array
@@ -187,12 +161,10 @@ class BruteForceBlock {
                             }
                             //$remaining_delay = $delay - (time() - $latest_failed_attempt_datetime); //correct
                             //echo 'You must wait ' . $remaining_delay . ' seconds before your next login attempt';
-
-
-                        } else {
+		              } else {
                             // add status to response array
                             $response_array['status'] = 'captcha';
-                        }
+						}
                         break;
                     }
                 }

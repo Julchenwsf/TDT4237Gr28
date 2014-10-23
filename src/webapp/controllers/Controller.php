@@ -16,6 +16,7 @@ abstract class Controller
             Security::validateToken(get_class($this));
         }
 
+
 		$BFBresponse = IPThrottlingGeneral::getRequestStatus(get_client_ip());
 		if ($BFBresponse['status']=='delay') {
 			//time delay required before next login (or general request)

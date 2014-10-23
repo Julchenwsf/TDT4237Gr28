@@ -3,22 +3,18 @@ namespace tdt4237\webapp;
 
 
 class IPThrottlingGeneral {
-    // array of throttle settings. # failed_attempts => response
+    // array of throttle settings. # attempts => response
     private static $default_throttle_settings = [
-        2 => 20, 			//delay in seconds
-        1000 => 3600	//delay of one hour if more than 1000 requests in the $time_frame_minutes
+        10000 => 600	//delay of ten minutes if more than 10000 requests in the $time_frame_minutes
     ];
 
 	static $app;
 
-
-    //database config
-    private static $_db = [
+    private static $_db = [ // if the database has to autoclear
         'auto_clear' => true
     ];
 
-    //time frame
-    private static $time_frame_minutes = 5;
+    private static $time_frame_minutes = 10;  //time frame, into which count the requests from the same IP
 
     /** setup and return database connection */
     private static function _databaseConnect(){
@@ -29,9 +25,8 @@ class IPThrottlingGeneral {
     public static function addRequest($ip_address){
         $db = IPThrottlingGeneral::_databaseConnect(); //get db connection
 
-		//attempt to insert failed login attempt
-        try{
-            $stmt = $db->query('INSERT INTO requests VALUES (null,"'.$ip_address.'", datetime(\'now\'))');
+        try{ //attempt to insert failed login attempt
+            $db->query('INSERT INTO requests VALUES (null,"'.$ip_address.'", datetime(\'now\'))');
             return true;
         } catch(PDOException $ex){
             //return errors
@@ -80,8 +75,8 @@ class IPThrottlingGeneral {
         //attempt to retrieve latest failed login attempts
         try{
             //get all failed attempst within time frame
-			echo $ip . " " . inet_pton($ip) . "\n";
-			echo "SELECT * FROM requests WHERE ip_address = '" . $ip . "' AND attempted_at > DATETIME('now', '-".self::$time_frame_minutes." minutes')";
+			//echo $ip . " " . inet_pton($ip) . "\n";
+			//echo "SELECT * FROM requests WHERE ip_address = '" . $ip . "' AND attempted_at > DATETIME('now', '-".self::$time_frame_minutes." minutes')";
             $get_number = $db->query("SELECT count(*) as conta FROM requests WHERE ip_address = '" . $ip . "' AND attempted_at > DATE('now', '-".self::$time_frame_minutes." minutes')");
             $number_recent_failed = $get_number->fetchColumn(0);
             //reverse order of settings, for iteration
