@@ -19,19 +19,19 @@ if (!function_exists('hash_equals')) {
 // Function to get the client IP address
 function get_client_ip() {
     $ipaddress = '';
-    if (isset($_SERVER['HTTP_CLIENT_IP']))
-        $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
-	else if(isset($_SERVER['REMOTE_ADDR']))
+	if(isset($_SERVER['REMOTE_ADDR']))
 		$ipaddress = $_SERVER['REMOTE_ADDR'];
 	else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
-        $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
-    else if(isset($_SERVER['HTTP_X_FORWARDED']))
-        $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
-    else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
-        $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
-    else if(isset($_SERVER['HTTP_FORWARDED']))
-        $ipaddress = $_SERVER['HTTP_FORWARDED'];
-    else
+		$ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+	else if(isset($_SERVER['HTTP_X_FORWARDED']))
+		$ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+	else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+		$ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+	else if(isset($_SERVER['HTTP_FORWARDED']))
+		$ipaddress = $_SERVER['HTTP_FORWARDED'];
+	else if (isset($_SERVER['HTTP_CLIENT_IP']))
+        $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+	else
         $ipaddress = 'UNKNOWN';
     return $ipaddress;
 }
@@ -57,6 +57,17 @@ try {
     echo $e->getMessage();
     exit();
 }
+
+/** @var $BFBresponse answer about if the IP should be throttled/banned or not */
+$BFBresponse = IPThrottlingGeneral::getLoginStatus(get_client_ip());
+if ($BFBresponse['status']=='delay') {
+	//time delay required before next login (or general request)
+	$this->app->flash('error', "Wait $BFBresponse[message] seconds before next request.");
+	$this->app->redirect('/');
+	die();
+}
+
+IPThrottlingGeneral::addFailedLoginAttempt(get_client_ip());
 
 $ns ='tdt4237\\webapp\\controllers\\'; 
 

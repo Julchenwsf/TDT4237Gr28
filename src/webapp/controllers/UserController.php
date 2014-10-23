@@ -165,6 +165,15 @@ class UserController extends Controller
             $this->app->flash('info', 'You are already logged in as ' . $username);
             $this->app->redirect('/');
         }
+
+		$BFBresponse = BruteForceBlock::getLoginStatus(get_client_ip());
+		if ($BFBresponse['status']=='delay') {
+			//time delay required before next login
+			$this->app->flash('error', "Wait $BFBresponse[message] seconds before login.");
+			$this->app->redirect('/');
+			die();
+		}
+
         if (empty($token)) {
             $request = $this->app->request;
             $username = '';
@@ -219,6 +228,7 @@ class UserController extends Controller
                     }
                 }
             }
+			BruteForceBlock::addFailedLoginAttempt(get_client_ip());
             $this->app->flash('info', 'Invalid or expired password reset token.');
             $this->app->redirect('/');           
         }

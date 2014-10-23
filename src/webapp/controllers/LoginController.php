@@ -3,8 +3,7 @@
 namespace tdt4237\webapp\controllers;
 
 use tdt4237\webapp\Auth;
-use tdt4237\webapp\BruteForceBlock;
-use tdt4237\webapp\models\User;
+use tdt4237\webapp\IPThrottlingGeneral;
 
 class LoginController extends Controller
 {
@@ -51,10 +50,7 @@ class LoginController extends Controller
             $this->app->flash('info', "You are now successfully logged in as $user.");
             $this->app->redirect('/');
         } else {
-            $userFound = User::findByUser($user);
-            $user_id = $userFound == null ? 0 : $userFound->getId();
-            $ip_addressget = get_client_ip();
-            BruteForceBlock::addFailedLoginAttempt($user_id, $ip_addressget);
+            BruteForceBlock::addFailedLoginAttempt(get_client_ip());
             $this->app->flashNow('error', 'Incorrect user/pass combination.');
             $this->render('login.twig', []);
         }
