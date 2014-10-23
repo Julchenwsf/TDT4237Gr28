@@ -79,6 +79,7 @@ class IPThrottlingGeneral {
         try{
             //get all failed attempst within time frame
 			echo $ip . " " . inet_pton($ip) . "\n";
+			echo "SELECT * FROM requests WHERE ip_address = '" . inet_pton($ip) . "' AND attempted_at > DATE('now', '-".self::$time_frame_minutes." minutes')";
             $get_number = $db->query("SELECT * FROM requests WHERE ip_address = '" . inet_pton($ip) . "' AND attempted_at > DATE('now', '-".self::$time_frame_minutes." minutes')");
             $number_recent_failed = $get_number->rowCount();
             //reverse order of settings, for iteration
