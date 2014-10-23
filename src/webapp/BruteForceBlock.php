@@ -105,7 +105,7 @@ class BruteForceBlock {
 
         //attempt to insert failed login attempt
         try{
-	            $stmt = $db->query('INSERT INTO user_failed_logins VALUES (null,"'.$ip_address.'", datetime())');
+	            $stmt = $db->query('INSERT INTO user_failed_logins VALUES (null,"'.$ip_address.'", datetime(\'now\'))');
             //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return true;
         } catch(PDOException $ex){
@@ -135,7 +135,10 @@ class BruteForceBlock {
 			$stmt = $db->query('SELECT MAX(attempted_at) AS attempted_at FROM user_failed_logins');
             $latest_failed_logins = $stmt->rowCount();
             $row = $stmt->fetch();
+			date_default_timezone_set('UTC');
+			echo $row['attempted_at'];
             $latest_failed_attempt_datetime = (int) date('U', strtotime($row['attempted_at'])); //get latest attempt's timestamp
+			echo $latest_failed_attempt_datetime;
 		} catch(PDOException $ex){
             //return error
             $response_array['status'] = 'error';
@@ -156,8 +159,11 @@ class BruteForceBlock {
         //attempt to retrieve latest failed login attempts
         try{
             //get all failed attempst within time frame
-            $get_number = $db->query('SELECT * FROM user_failed_logins WHERE ip_address = "' . $ip . '" AND attempted_at > DATETIME(\'now\', \'-'.self::$time_frame_minutes.' minutes\')');
-            $number_recent_failed = $get_number->rowCount();
+			echo " " . 'SELECT * FROM user_failed_logins WHERE ip_address = "' . $ip . '"' ;
+            $get_number = $db->prepare('SELECT count(*) FROM user_failed_logins WHERE ip_address = "' . $ip . '"'); //AND attempted_at > DATETIME(\'now\', \'-'.self::$time_frame_minutes.' minutes\')');
+			$get_number->execute();
+			$number_recent_failed = $get_number->rowCount();
+			echo "Number of attempts " . $number_recent_failed;
             //reverse order of settings, for iteration
             krsort($throttle_settings);
 
@@ -170,7 +176,7 @@ class BruteForceBlock {
                         if (is_numeric($delay)) {
                             //find the time of the next allowed login
                             $next_login_minimum_time = $latest_failed_attempt_datetime + $delay;
-
+	echo time() . " " .  $next_login_minimum_time . " " . $delay;
                             //if the next allowed login time is in the future, calculate the remaining delay
                             if(time() < $next_login_minimum_time){
                                 $remaining_delay = $next_login_minimum_time - time();

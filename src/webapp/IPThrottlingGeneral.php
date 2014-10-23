@@ -58,7 +58,8 @@ class IPThrottlingGeneral {
 			$stmt = $db->query('CREATE TABLE IF NOT EXISTS `requests` (`id` integer PRIMARY KEY,`ip_address` string DEFAULT NULL,`attempted_at` datetime NOT NULL)');
 			$stmt = $db->query('SELECT MAX(attempted_at) AS attempted_at FROM user_failed_logins');
             $row = $stmt-> fetch();
-            $latest_request_datetime = (int) date('U', strtotime($row['attempted_at'])); //get latest request's timestamp
+			date_default_timezone_set('UTC');
+			$latest_request_datetime = (int) date('U', strtotime($row['attempted_at'])); //get latest request's timestamp
 		} catch(PDOException $ex){
             //return error
             $response_array['status'] = 'error';

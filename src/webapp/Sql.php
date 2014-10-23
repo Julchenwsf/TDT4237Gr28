@@ -90,6 +90,8 @@ try {
     Sql::$pdo = new \PDO('sqlite:app.db');
     // Set errormode to exceptions
     Sql::$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+
 } catch(\PDOException $e) {
     echo $e->getMessage();
     exit();

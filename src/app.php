@@ -40,7 +40,7 @@ function get_client_ip() {
 
 $app = new \Slim\Slim([
     'templates.path' => __DIR__.'/webapp/templates/',
-    'debug' => false,
+    'debug' => true,
     'view' => new \Slim\Views\Twig()
 ]);
 
