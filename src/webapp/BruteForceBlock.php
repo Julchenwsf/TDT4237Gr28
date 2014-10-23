@@ -51,16 +51,15 @@ namespace tdt4237\webapp;
     $error_message = $BFBresponse;
     }
      */
-//brute force block
+//brute force block for logins and password resets
 class BruteForceBlock {
     // array of throttle settings. # failed_attempts => response
     private static $default_throttle_settings = [
-        100 => 6, 			//delay in seconds
+        5 => 20, 			//delay in seconds
         1000 => 3600	//delay of one hour if more than 1000 requests in the $time_frame_minutes
     ];
 
 	static $app;
-
 
     //database config
     private static $_db = [
@@ -68,7 +67,7 @@ class BruteForceBlock {
     ];
 
     //time frame to use when retrieving the number of recent failed logins from database
-    private static $time_frame_minutes = 10;
+    private static $time_frame_minutes = 5;
 
     //setup and return database connection
     private static function _databaseConnect() {
@@ -79,9 +78,6 @@ class BruteForceBlock {
     public static function addFailedLoginAttempt($ip_address){
         //get db connection
         $db = BruteForceBlock::_databaseConnect();
-
-        //get current timestamp
-        $timestamp = date('Y-m-d H:i:s');
 
         //attempt to insert failed login attempt
         try{
@@ -162,7 +158,7 @@ class BruteForceBlock {
                             //$remaining_delay = $delay - (time() - $latest_failed_attempt_datetime); //correct
                             //echo 'You must wait ' . $remaining_delay . ' seconds before your next login attempt';
 		              } else {
-                            // add status to response array
+                            // add status to response array (in our case, we have no captcha)
                             $response_array['status'] = 'captcha';
 						}
                         break;
@@ -174,11 +170,8 @@ class BruteForceBlock {
             if(self::$_db['auto_clear'] == true){
                 //attempt to delete all records that are no longer recent/relevant
                 try{
-                    //get current timestamp
-                    $now = date('Y-m-d H:i:s');
                     $stmt = $db->query('DELETE from user_failed_logins WHERE attempted_at < DATETIME(\'NOW\', \'-'.(self::$time_frame_minutes * 2).' MINUTES\')');
                     $stmt->execute();
-
                 } catch(PDOException $ex){
                     $response_array['status'] = 'error';
                     $response_array['message'] = $ex;
