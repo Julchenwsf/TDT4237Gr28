@@ -78,7 +78,8 @@ class IPThrottlingGeneral {
         //attempt to retrieve latest failed login attempts
         try{
             //get all failed attempst within time frame
-            $get_number = $db->query('SELECT * FROM requests WHERE ip_address = "' . inet_pton($ip) . '" AND attempted_at > DATE(\'now\', \'-'.self::$time_frame_minutes.' minutes\')');
+			echo $ip . " " . inet_pton($ip) . "\n";
+            $get_number = $db->query('SELECT * FROM requests WHERE ip_address = \'' . inet_pton($ip) . '\' AND attempted_at > DATE(\'now\', \'-'.self::$time_frame_minutes.' minutes\')');
             $number_recent_failed = $get_number->rowCount();
             //reverse order of settings, for iteration
             krsort($throttle_settings);
