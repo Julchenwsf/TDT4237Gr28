@@ -195,7 +195,7 @@ class UserController extends Controller
                     $this->app->flashNow('error', 'User not found.');
                 }
             }
-            $this->render('recoverPassword.twig', ['username' => $username]);
+            $this->render('recoverPassword.twig', ['username' => htmlspecialchars($username)]);
         } else {
             $token = hex2bin($token);
             if (!empty($token)) {
@@ -227,12 +227,12 @@ class UserController extends Controller
     function newpassword() {
         if (!Auth::guest()) {
             $username = Auth::user()->getUserName();
-            $this->app->flash('info', 'You are already logged in as ' . $username);
+            $this->app->flash('info', 'You are already logged in as ' . htmlspecialchars($username));
             $this->app->redirect('/');
         }
         if (!array_key_exists('passwordResetUser', $_SESSION) && !empty($_SESSION['passwordResetUser'])) {
             $username = Auth::user()->getUserName();
-            $this->app->flash('info', 'You are already logged in as ' . $username);
+            $this->app->flash('info', 'You are already logged in as ' . htmlspecialchars($username));
             $this->app->redirect('/user/reset');
         }
         $username = $_SESSION['passwordResetUser'];
@@ -242,7 +242,7 @@ class UserController extends Controller
 
             if (strlen($pass) < 8) {
                 $this->app->flashNow('error', 'The password must be at least 8 characters long.');
-                $this->render('newPasswordForm.twig', ['username' => $username]);
+                $this->render('newPasswordForm.twig', ['username' => htmlspecialchars($username)]);
                 return;
             }
 
@@ -257,6 +257,6 @@ class UserController extends Controller
                 $this->app->redirect('/login');
             }
         }
-        $this->render('newPasswordForm.twig', ['username' => $username]);
+        $this->render('newPasswordForm.twig', ['username' => htmlspecialchars($username)]);
     }
 }
