@@ -114,7 +114,7 @@ class BruteForceBlock {
             $row = $stmt->fetch();
 			date_default_timezone_set('UTC');
 			$latest_failed_attempt_datetime = (int) date('U', strtotime($row['attempted_at'])); //get latest attempt's timestamp
-			echo $latest_failed_attempt_datetime;
+			//echo $latest_failed_attempt_datetime;
 		} catch(PDOException $ex){
             //return error
             $response_array['status'] = 'error';
