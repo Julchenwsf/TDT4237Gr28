@@ -19,8 +19,9 @@ abstract class Controller
 		$BFBresponse = IPThrottlingGeneral::getRequestStatus(get_client_ip());
 		if ($BFBresponse['status']=='delay') {
 			//time delay required before next login (or general request)
-			$this->app->flash('error', "Wait $BFBresponse[message] seconds before next request.");
-			$this->app->redirect('/');
+			//$this->app->flashNow('error', "Wait $BFBresponse[message] seconds before next request.");
+			throw new \Exception;
+			//$this->app->redirect('/');
 			//die();
 		}
 
