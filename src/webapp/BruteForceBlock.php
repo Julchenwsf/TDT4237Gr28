@@ -105,7 +105,7 @@ class BruteForceBlock {
 
         //attempt to insert failed login attempt
         try{
-            $stmt = $db->query('INSERT INTO user_failed_logins VALUES (null,"'.$ip_address.'", date(\'now\'))');
+	            $stmt = $db->query('INSERT INTO user_failed_logins VALUES (null,"'.$ip_address.'", datetime())');
             //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return true;
         } catch(PDOException $ex){
