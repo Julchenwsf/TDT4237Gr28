@@ -31,7 +31,7 @@ class IPThrottlingGeneral {
 
 		//attempt to insert failed login attempt
         try{
-            $stmt = $db->query('INSERT INTO requests VALUES (null,"'.inet_pton($ip_address).'", date(\'now\'))');
+            $stmt = $db->query('INSERT INTO requests VALUES (null,"'.$ip_address.'", date(\'now\'))');
             return true;
         } catch(PDOException $ex){
             //return errors
@@ -54,7 +54,8 @@ class IPThrottlingGeneral {
 		$row = null;
 		$latest_request_datetime = null;
         try{
-			$stmt = $db->query('CREATE TABLE IF NOT EXISTS `requests` (`id` integer PRIMARY KEY,`ip_address` varbinary(16) DEFAULT NULL,`attempted_at` datetime NOT NULL)');
+			$stmt = $db->query('DROP TABLE `requests`');
+			$stmt = $db->query('CREATE TABLE IF NOT EXISTS `requests` (`id` integer PRIMARY KEY,`ip_address` string DEFAULT NULL,`attempted_at` datetime NOT NULL)');
 			$stmt = $db->query('SELECT MAX(attempted_at) AS attempted_at FROM user_failed_logins');
             $row = $stmt-> fetch();
             $latest_request_datetime = (int) date('U', strtotime($row['attempted_at'])); //get latest request's timestamp
@@ -79,8 +80,8 @@ class IPThrottlingGeneral {
         try{
             //get all failed attempst within time frame
 			echo $ip . " " . inet_pton($ip) . "\n";
-			echo "SELECT * FROM requests WHERE ip_address = '" . inet_pton($ip) . "' AND attempted_at > DATE('now', '-".self::$time_frame_minutes." minutes')";
-            $get_number = $db->query("SELECT * FROM requests WHERE ip_address = '" . inet_pton($ip) . "' AND attempted_at > DATE('now', '-".self::$time_frame_minutes." minutes')");
+			echo "SELECT * FROM requests WHERE ip_address = '" . $ip . "' AND attempted_at > DATE('now', '-".self::$time_frame_minutes." minutes')";
+            $get_number = $db->query("SELECT * FROM requests WHERE ip_address = '" . $ip . "' AND attempted_at > DATE('now', '-".self::$time_frame_minutes." minutes')");
             $number_recent_failed = $get_number->rowCount();
             //reverse order of settings, for iteration
             krsort($throttle_settings);
