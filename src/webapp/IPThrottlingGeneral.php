@@ -50,7 +50,7 @@ class IPThrottlingGeneral {
 		$latest_request_datetime = null;
         try{
 			//$stmt = $db->query('DROP TABLE `requests`');
-			$db->query('CREATE TABLE IF NOT EXISTS `requests` (`id` integer PRIMARY KEY,`ip_address` string DEFAULT NULL,`attempted_at` datetime NOT NULL)');
+			//$db->query('CREATE TABLE IF NOT EXISTS `requests` (`id` integer PRIMARY KEY,`ip_address` string DEFAULT NULL,`attempted_at` datetime NOT NULL)');
 			$stmt = $db->query('SELECT MAX(attempted_at) AS attempted_at FROM requests');
             $row = $stmt-> fetch();
 			date_default_timezone_set('UTC');

@@ -20,11 +20,15 @@ class Sql
         $q2 = "CREATE TABLE profile_pictures (user_id INTEGER PRIMARY KEY, data BLOB);";
         $q4 = "CREATE TABLE movies (id INTEGER PRIMARY KEY, name VARVHAR(50), imageurl VARCHAR(100) );";
         $q5 = "CREATE TABLE moviereviews (id INTEGER PRIMARY KEY, movieid INTEGER, author VARVHAR(50), text VARCHAR(500) );";
+		$q6 = "CREATE TABLE user_failed_logins (id integer PRIMARY KEY, ip_address string DEFAULT NULL, attempted_at datetime NOT NULL)";
+		$q7 = "CREATE TABLE requests (id integer PRIMARY KEY, ip_address string DEFAULT NULL, attempted_at datetime NOT NULL)";
 
         self::$pdo->exec($q1);
         self::$pdo->exec($q2);
         self::$pdo->exec($q4);
         self::$pdo->exec($q5);
+		self::$pdo->exec($q6);
+		self::$pdo->exec($q7);
 
         print "[tdt4237] Done creating all SQL tables.".PHP_EOL;
 
