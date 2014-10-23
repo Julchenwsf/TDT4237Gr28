@@ -31,7 +31,7 @@ class IPThrottlingGeneral {
 
 		//attempt to insert failed login attempt
         try{
-            $stmt = $db->query('INSERT INTO requests VALUES (null,'.inet_pton($ip_address).', date(\'now\'))');
+            $stmt = $db->query('INSERT INTO requests VALUES (null,"'.inet_pton($ip_address).'", date(\'now\'))');
             return true;
         } catch(PDOException $ex){
             //return errors
@@ -78,7 +78,7 @@ class IPThrottlingGeneral {
         //attempt to retrieve latest failed login attempts
         try{
             //get all failed attempst within time frame
-            $get_number = $db->query('SELECT * FROM requests WHERE ip_address = ' . inet_pton($ip) . ' AND attempted_at > DATE(\'now\', \'-'.self::$time_frame_minutes.' minutes\')');
+            $get_number = $db->query('SELECT * FROM requests WHERE ip_address = "' . inet_pton($ip) . '" AND attempted_at > DATE(\'now\', \'-'.self::$time_frame_minutes.' minutes\')');
             $number_recent_failed = $get_number->rowCount();
             //reverse order of settings, for iteration
             krsort($throttle_settings);

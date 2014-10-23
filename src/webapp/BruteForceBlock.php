@@ -105,7 +105,7 @@ class BruteForceBlock {
 
         //attempt to insert failed login attempt
         try{
-            $stmt = $db->query('INSERT INTO user_failed_logins VALUES (null,'.inet_pton($ip_address).', date(\'now\'))');
+            $stmt = $db->query('INSERT INTO user_failed_logins VALUES (null,"'.inet_pton($ip_address).'", date(\'now\'))');
             //$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return true;
         } catch(PDOException $ex){
@@ -156,7 +156,7 @@ class BruteForceBlock {
         //attempt to retrieve latest failed login attempts
         try{
             //get all failed attempst within time frame
-            $get_number = $db->query('SELECT * FROM user_failed_logins WHERE ip_address = ' . inet_pton($ip) . ' AND attempted_at > DATE(\'now\', \'-'.self::$time_frame_minutes.' minutes\')');
+            $get_number = $db->query('SELECT * FROM user_failed_logins WHERE ip_address = "' . inet_pton($ip) . '" AND attempted_at > DATE(\'now\', \'-'.self::$time_frame_minutes.' minutes\')');
             $number_recent_failed = $get_number->rowCount();
             //reverse order of settings, for iteration
             krsort($throttle_settings);
