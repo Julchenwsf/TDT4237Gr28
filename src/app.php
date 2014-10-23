@@ -1,6 +1,6 @@
 <?php
 ini_set('session.cookie_httponly', '1');
-ini_set('session.cookie_secure', '1');
+ini_set('session.cookie_secure', '1'); // disable if not HTTPS
 header('Strict-Transport-Security: max-age=31536000');
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -20,21 +20,7 @@ if (!function_exists('hash_equals')) {
 
 // Function to get the client IP address
 function get_client_ip() {
-    $ipaddress = '';
-	if(isset($_SERVER['REMOTE_ADDR']))
-		$ipaddress = $_SERVER['REMOTE_ADDR'];
-	else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
-		$ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
-	else if(isset($_SERVER['HTTP_X_FORWARDED']))
-		$ipaddress = $_SERVER['HTTP_X_FORWARDED'];
-	else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
-		$ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
-	else if(isset($_SERVER['HTTP_FORWARDED']))
-		$ipaddress = $_SERVER['HTTP_FORWARDED'];
-	else if (isset($_SERVER['HTTP_CLIENT_IP']))
-        $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
-	else
-        $ipaddress = 'UNKNOWN';
+	$ipaddress = $_SERVER['REMOTE_ADDR'];
     return $ipaddress;
 }
 
