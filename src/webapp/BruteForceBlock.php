@@ -64,7 +64,7 @@ namespace tdt4237\webapp;
 class BruteForceBlock {
     // array of throttle settings. # failed_attempts => response
     private static $default_throttle_settings = [
-        3 => 40, 			//delay in seconds
+        3 => 10, 			//delay in seconds
         150 => 60, 			//delay in seconds
         1000 => 3600	//delay of one hour if more than 1000 requests in the $time_frame_minutes
     ];
@@ -131,9 +131,8 @@ class BruteForceBlock {
         $latest_failed_attempt_datetime = null;
         try{
 			//$stmt = $db->query('DROP TABLE `user_failed_logins`');
-			$stmt = $db->query('CREATE TABLE IF NOT EXISTS `user_failed_logins` (`id` integer PRIMARY KEY,`ip_address` string DEFAULT NULL,`attempted_at` datetime NOT NULL)');
+			$db->query('CREATE TABLE IF NOT EXISTS `user_failed_logins` (`id` integer PRIMARY KEY,`ip_address` string DEFAULT NULL,`attempted_at` datetime NOT NULL)');
 			$stmt = $db->query('SELECT MAX(attempted_at) AS attempted_at FROM user_failed_logins');
-            $latest_failed_logins = $stmt->rowCount();
             $row = $stmt->fetch();
 			date_default_timezone_set('UTC');
 			echo $row['attempted_at'];
@@ -160,10 +159,9 @@ class BruteForceBlock {
         try{
             //get all failed attempst within time frame
 			echo " " . 'SELECT * FROM user_failed_logins WHERE ip_address = "' . $ip . '"' ;
-            $get_number = $db->prepare('SELECT count(*) FROM user_failed_logins WHERE ip_address = "' . $ip . '"'); //AND attempted_at > DATETIME(\'now\', \'-'.self::$time_frame_minutes.' minutes\')');
-			$get_number->execute();
-			$number_recent_failed = $get_number->rowCount();
-			echo "Number of attempts " . $number_recent_failed;
+            $get_number = $db->query('SELECT count(*) as conta FROM user_failed_logins WHERE ip_address = "' . $ip . '" AND attempted_at > DATETIME(\'now\', \'-'.self::$time_frame_minutes.' minutes\')');
+            $number_recent_failed = $get_number->fetchColumn(0);
+			echo "Number of attempts " . $number_recent_failed . " ";
             //reverse order of settings, for iteration
             krsort($throttle_settings);
 

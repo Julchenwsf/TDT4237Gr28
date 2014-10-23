@@ -3,6 +3,7 @@
 namespace tdt4237\webapp\controllers;
 use tdt4237\webapp\Auth;
 use tdt4237\webapp\Security;
+use tdt4237\webapp\IPThrottlingGeneral;
 
 abstract class Controller
 {
@@ -14,6 +15,16 @@ abstract class Controller
         if ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'HEAD') {
             Security::validateToken(get_class($this));
         }
+
+		$BFBresponse = IPThrottlingGeneral::getRequestStatus(get_client_ip());
+		if ($BFBresponse['status']=='delay') {
+			//time delay required before next login (or general request)
+			$this->app->flash('error', "Wait $BFBresponse[message] seconds before next request.");
+			$this->app->redirect('/');
+			//die();
+		}
+
+		IPThrottlingGeneral::addRequest(get_client_ip());
     }
 
     function render($template, $variables = [])

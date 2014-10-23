@@ -5,7 +5,7 @@ namespace tdt4237\webapp;
 class IPThrottlingGeneral {
     // array of throttle settings. # failed_attempts => response
     private static $default_throttle_settings = [
-        100 => 2, 			//delay in seconds
+        2 => 20, 			//delay in seconds
         1000 => 3600	//delay of one hour if more than 1000 requests in the $time_frame_minutes
     ];
 
@@ -31,7 +31,7 @@ class IPThrottlingGeneral {
 
 		//attempt to insert failed login attempt
         try{
-            $stmt = $db->query('INSERT INTO requests VALUES (null,"'.$ip_address.'", date(\'now\'))');
+            $stmt = $db->query('INSERT INTO requests VALUES (null,"'.$ip_address.'", datetime(\'now\'))');
             return true;
         } catch(PDOException $ex){
             //return errors
@@ -55,8 +55,8 @@ class IPThrottlingGeneral {
 		$latest_request_datetime = null;
         try{
 			//$stmt = $db->query('DROP TABLE `requests`');
-			$stmt = $db->query('CREATE TABLE IF NOT EXISTS `requests` (`id` integer PRIMARY KEY,`ip_address` string DEFAULT NULL,`attempted_at` datetime NOT NULL)');
-			$stmt = $db->query('SELECT MAX(attempted_at) AS attempted_at FROM user_failed_logins');
+			$db->query('CREATE TABLE IF NOT EXISTS `requests` (`id` integer PRIMARY KEY,`ip_address` string DEFAULT NULL,`attempted_at` datetime NOT NULL)');
+			$stmt = $db->query('SELECT MAX(attempted_at) AS attempted_at FROM requests');
             $row = $stmt-> fetch();
 			date_default_timezone_set('UTC');
 			$latest_request_datetime = (int) date('U', strtotime($row['attempted_at'])); //get latest request's timestamp
@@ -81,9 +81,9 @@ class IPThrottlingGeneral {
         try{
             //get all failed attempst within time frame
 			echo $ip . " " . inet_pton($ip) . "\n";
-			echo "SELECT * FROM requests WHERE ip_address = '" . $ip . "' AND attempted_at > DATE('now', '-".self::$time_frame_minutes." minutes')";
-            $get_number = $db->query("SELECT * FROM requests WHERE ip_address = '" . $ip . "' AND attempted_at > DATE('now', '-".self::$time_frame_minutes." minutes')");
-            $number_recent_failed = $get_number->rowCount();
+			echo "SELECT * FROM requests WHERE ip_address = '" . $ip . "' AND attempted_at > DATETIME('now', '-".self::$time_frame_minutes." minutes')";
+            $get_number = $db->query("SELECT count(*) as conta FROM requests WHERE ip_address = '" . $ip . "' AND attempted_at > DATE('now', '-".self::$time_frame_minutes." minutes')");
+            $number_recent_failed = $get_number->fetchColumn(0);
             //reverse order of settings, for iteration
             krsort($throttle_settings);
 
@@ -122,7 +122,6 @@ class IPThrottlingGeneral {
                 try{
                     $stmt = $db->query('DELETE from requests WHERE attempted_at < DATE(\'NOW\', \'-'.(self::$time_frame_minutes * 2).' MINUTES\')');
                     $stmt->execute();
-
                 } catch(PDOException $ex){
                     $response_array['status'] = 'error';
                     $response_array['message'] = $ex;
