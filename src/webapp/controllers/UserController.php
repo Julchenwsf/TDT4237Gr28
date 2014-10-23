@@ -7,6 +7,7 @@ use tdt4237\webapp\models\ProfilePicture;
 use tdt4237\webapp\Hash;
 use tdt4237\webapp\Auth;
 use tdt4237\webapp\Security;
+use tdt4237\webapp\BruteForceBlock;
 
 class UserController extends Controller
 {

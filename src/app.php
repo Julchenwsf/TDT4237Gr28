@@ -4,6 +4,8 @@ ini_set('session.cookie_secure', '1');
 header('Strict-Transport-Security: max-age=31536000');
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use tdt4237\webapp\IPThrottlingGeneral;
+
 if (!function_exists('hash_equals')) {
     function hash_equals($str1, $str2) {
         $res = $str1 ^ $str2;

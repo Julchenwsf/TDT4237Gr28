@@ -3,7 +3,7 @@
 namespace tdt4237\webapp\controllers;
 
 use tdt4237\webapp\Auth;
-use tdt4237\webapp\IPThrottlingGeneral;
+use tdt4237\webapp\BruteForceBlock;
 
 class LoginController extends Controller
 {
