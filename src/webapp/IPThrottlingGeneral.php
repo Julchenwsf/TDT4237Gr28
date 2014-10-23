@@ -5,7 +5,7 @@ namespace tdt4237\webapp;
 class IPThrottlingGeneral {
     // array of throttle settings. # attempts => response
     private static $default_throttle_settings = [
-        1000 => 600	//delay of ten minutes if more than 10000 requests in the $time_frame_minutes
+        10000 => 600	//delay of ten minutes if more than 10000 requests in the $time_frame_minutes
     ];
 
 	static $app;
