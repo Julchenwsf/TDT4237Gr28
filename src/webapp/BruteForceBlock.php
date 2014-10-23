@@ -55,7 +55,7 @@ namespace tdt4237\webapp;
 class BruteForceBlock {
     // array of throttle settings. # failed_attempts => response
     private static $default_throttle_settings = [
-        5 => 20, 			//delay in seconds
+        100 => 6, 			//delay in seconds
         1000 => 3600	//delay of one hour if more than 1000 requests in the $time_frame_minutes
     ];
 
