@@ -1,7 +1,7 @@
 <?php
 ini_set('session.cookie_httponly', '1');
-ini_set('session.cookie_secure', '1'); // disable if not HTTPS
-header('Strict-Transport-Security: max-age=31536000');
+// ini_set('session.cookie_secure', '1'); // disable if not HTTPS
+// header('Strict-Transport-Security: max-age=31536000');
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use tdt4237\webapp\IPThrottlingGeneral;
